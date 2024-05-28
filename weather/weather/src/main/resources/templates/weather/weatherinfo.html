@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/main_custom}">
+<head>
+    <title> Weather Information </title>
+    <meta charset="utf-8"/>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('#searchForm').submit(function (event) {
+                event.preventDefault();
+                var searchParam = $('#searchInput').val();
+
+                $.ajax({
+                    type: 'GET',
+                    url: '/api/search', // Your Spring REST endpoint
+                    data: {city: searchParam},
+                    contentType: 'application/json',
+                    success: function (data) {
+                        $('#largeModal').modal('toggle');
+                        console.log(JSON.stringify(data));
+                        document.getElementById("modalHeaderTitle").innerHTML = "Fellow Details";
+                        let content =
+                            '<tr>' +
+                            '<td><strong> Location: </strong></td>' +
+                            '<td>' + data.location + '</td>' +
+                            '</tr>' +
+
+                            '<tr>' +
+                            '<td><strong> Weather: </strong></td>' +
+                            '<td>' + data.weather + '</td>' +
+                            '</tr>' +
+
+                            '<tr>' +
+                            '<td style="width: 150px;"> <strong> Temperature: </strong> </td>' +
+                            '<td>' + data.temp + '</td>' +
+                            '</tr>' +
+
+                            '<tr>' +
+                            '<td><strong> Feels Like: </strong></td>' +
+                            '<td>' + data.feels_like + '</td>' +
+                            '</tr>' +
+
+                            '<tr>' +
+                            '<td><strong> Minimum Temperature: </strong></td>' +
+                            '<td>' + data.temp_min + '</td>' +
+                            '</tr>' +
+
+                            '<tr>' +
+                            '<td><strong> Maximum Temperature: </strong></td>' +
+                            '<td>' + data.temp_max + '</td>' +
+                            '</tr>' +
+
+                            '<tr>' +
+                            '<td><strong> Presurre: </strong></td>' +
+                            '<td>' + data.pressure + '</td>' +
+                            '</tr>' +
+
+                            '<tr>' +
+                            '<td><strong> Humidity: </strong></td>' +
+                            '<td>' + data.humidity + '</td>' +
+                            '</tr>' +
+
+                            '<tr>' +
+                            '<td><strong> Longitude: </strong></td>' +
+                            '<td>' + data.longitude + '</td>' +
+                            '</tr>' +
+
+                            '<tr>' +
+                            '<td><strong> Latitude: </strong></td>' +
+                            '<td>' + data.latitude + '</td>' +
+                            '</tr>';
+
+                        $("#modalContent").html(content);
+
+                    },
+                    error: function (error) {
+                        // Handle the JSON response (e.g., update UI)
+                        console.log(error);
+                    }
+                });
+            });
+        });
+    </script>
+</head>
+
+<div layout:fragment="content">
+    <div class="row">
+        <div class="col-12">
+            <!--            <h4 class="fw-bold py-3"><span class="text-muted fw-light">Weather Information /</span></h4>-->
+            <h4 class="fw-bold py-3"><span class="text-muted fw-light">Weather Information /</span> Search Weather</h4>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-12">
+            <div class="card mb-4">
+                <div class="card-body">
+                    <!--                    <div th:replace="view/fellow/create/create :: firstcreate"></div>-->
+                    <form id="searchForm">
+                        <input type="text"
+                               id="searchInput"
+                               style="height: 33px; width: 230px;"
+                               name="searchInput"
+                               placeholder="Enter Location">
+                        <button style="height: 33px;
+                                       width: 75px;
+                                       border: 2px solid darkgray;
+                                       border-radius: 5px;
+                                       margin-left: 5px;"
+                                type="submit">Search
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--    <div th:replace="view/fellow/create/script :: firstscript"></div>-->
+    <div th:fragment="modal" xmlns:th="http://www.w3.org/1999/xhtml">
+        <!-- Modal -->
+        <div class="modal fade" id="largeModal" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-lg" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="modalHeaderTitle"></h5>
+                        <button
+                                type="button"
+                                class="btn-close"
+                                data-bs-dismiss="modal"
+                                aria-label="Close"
+                        ></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="table-responsive text-nowrap">
+                            <table class="table table-sm table-bordered rounded" style="table-layout: fixed;">
+                                <tbody id="modalContent"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
+                            Close
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+</html>
+
+
+
+
+
+
+
+
+
+
+
+

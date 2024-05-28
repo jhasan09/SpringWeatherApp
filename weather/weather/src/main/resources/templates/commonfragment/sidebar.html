@@ -26,19 +26,11 @@
                 </a>
             </li>
 
-            <li class="menu-header small text-uppercase">
-                <span class="menu-header-text" style="color: #004980; font-weight: bold;"
-                >menu 1</span>
-            </li>
-
-            <li class="menu-header small text-uppercase">
-                <span class="menu-header-text" style="color: #004980; font-weight: bold;"
-                >menu 2</span>
-            </li>
-
-            <li class="menu-header small text-uppercase">
-                <span class="menu-header-text" style="color: #004980; font-weight: bold;"
-                >menu 3</span>
+            <li th:class="${#httpServletRequest.requestURI.contains('weatherinfo')} ? 'menu-item active' : 'menu-item'">
+                <a href="/weatherinfo" class="menu-link">
+                    <i class="menu-icon tf-icons bx bxs-cloud-lightning"></i>
+                    <div data-i18n="Basic">Get Weather Info.</div>
+                </a>
             </li>
 
         </ul>

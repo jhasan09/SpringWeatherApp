@@ -29,4 +29,15 @@ public class UserService {
         user.setActive(true);
         return userRepository.save(user);
     }
+
+    public void updatePassword(String userName, String oldPassword, String newPassword) {
+        User user = userRepository.findByUserNameAndActive(userName, true);
+
+        if (bCryptPasswordEncoder.matches(oldPassword, user.getPassword())) {
+            user.setPassword(bCryptPasswordEncoder.encode(newPassword));
+            userRepository.save(user);
+        } else {
+            throw new IllegalArgumentException("Incorrect old password");
+        }
+    }
 }

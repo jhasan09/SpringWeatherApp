@@ -74,7 +74,6 @@
                                         </div>
                                     </div>
                                     <div class="flex-grow-1">
-                                        <!--                                        <span class="fw-semibold d-block" th:utext="${userName}"></span>-->
                                         <span class="fw-semibold d-block" th:utext="${session.userName}"></span>
                                     </div>
                                 </div>
@@ -84,7 +83,16 @@
                             <div class="dropdown-divider"></div>
                         </li>
                         <li>
-                            <div class="dropdown-divider"></div>
+                            <a class="dropdown-item" th:href="@{/user/editprofile(id=${session.userId})}">
+                                <i class="bx bx-image me-2"></i>
+                                <span class="align-middle">My Profile</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" href="/user/change-password">
+                                <i class="bx bx-lock-open-alt me-2"></i>
+                                <span class="align-middle">Change Password</span>
+                            </a>
                         </li>
                         <li>
                             <a class="dropdown-item" href="/logout">

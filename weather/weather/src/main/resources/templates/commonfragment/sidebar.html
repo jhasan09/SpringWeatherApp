@@ -33,6 +33,20 @@
                 </a>
             </li>
 
+            <li th:class="${#httpServletRequest.requestURI.contains('editprofile')} ? 'menu-item active' : 'menu-item'">
+                <a th:href="@{/user/editprofile(id=${session.userId})}" class="menu-link">
+                    <i class="menu-icon tf-icons bx bx-image"></i>
+                    <div data-i18n="Basic">My Profile.</div>
+                </a>
+            </li>
+
+            <li th:class="${#httpServletRequest.requestURI.contains('change-password')} ? 'menu-item active' : 'menu-item'">
+                <a href="/user/change-password" class="menu-link">
+                    <i class="menu-icon tf-icons bx bx-lock-open-alt"></i>
+                    <div data-i18n="Basic">Change Password.</div>
+                </a>
+            </li>
+
         </ul>
     </aside>
 </div>

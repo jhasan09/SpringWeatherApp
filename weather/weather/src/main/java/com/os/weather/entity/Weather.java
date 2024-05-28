@@ -4,6 +4,14 @@ public class Weather {
     public double temp;
     public double feels_like;
     public double temp_min;
+    public double temp_max;
+    public double pressure;
+    public double humidity;
+    public String location;
+    public double longitude;
+    public double latitude;
+    public String weather;
+    public String error;
 
     public void setTemp(double temp) {
         this.temp = temp;
@@ -48,14 +56,4 @@ public class Weather {
     public void setError(String error) {
         this.error = error;
     }
-
-    public double temp_max;
-    public double pressure;
-    public double humidity;
-    public String location;
-    public double longitude;
-    public double latitude;
-    public String weather;
-    public String error;
-
 }

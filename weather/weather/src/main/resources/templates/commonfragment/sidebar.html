@@ -1,0 +1,46 @@
+<div xmlns:th="http://www.w3.org/1999/xhtml"
+     xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+    <aside id="layout-menu" class="layout-menu menu-vertical menu bg-menu-theme" th:fragment="sidebar">
+        <div class="app-brand demo">
+            <a href="/home" class="app-brand-link">
+              <span class="app-brand-logo demo py-1">
+                <img th:src="@{/asset/images/home.png}" alt="User Name" width="40"/>
+              </span>
+                <span class="app-brand-text demo menu-text fw-bolder ms-2">WA</span>
+            </a>
+
+            <a href="javascript:void(0);" class="layout-menu-toggle menu-link text-large ms-auto d-block d-xl-none">
+                <i class="bx bx-chevron-left bx-sm align-middle"></i>
+            </a>
+        </div>
+
+        <div class="menu-inner-shadow"></div>
+
+        <ul class="menu-inner py-1 mb-5">
+
+            <!-- Dashboard -->
+            <li th:class="${#httpServletRequest.requestURI.contains('home')} ? 'menu-item active' : 'menu-item'">
+                <a href="/home" class="menu-link">
+                    <i class="menu-icon tf-icons bx bx-home-circle"></i>
+                    <div data-i18n="Analytics">Dashboard</div>
+                </a>
+            </li>
+
+            <li class="menu-header small text-uppercase">
+                <span class="menu-header-text" style="color: #004980; font-weight: bold;"
+                >menu 1</span>
+            </li>
+
+            <li class="menu-header small text-uppercase">
+                <span class="menu-header-text" style="color: #004980; font-weight: bold;"
+                >menu 2</span>
+            </li>
+
+            <li class="menu-header small text-uppercase">
+                <span class="menu-header-text" style="color: #004980; font-weight: bold;"
+                >menu 3</span>
+            </li>
+
+        </ul>
+    </aside>
+</div>

@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/main_custom}">
+<head>
+    <meta charset="utf-8"/>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            loadLikedCitiesList();
+        });
+
+        function loadLikedCitiesList() {
+            $.ajax({
+                type: "get",
+                url: "/api/likedcitylist",
+                data: "",
+                dataType: "json",
+                success: function (data) {
+                    var dataObj = data.queryList;
+                    $('#listCities').DataTable({
+                        "aaData": dataObj,
+                        "columns": [
+                            {"data": "city_name"},
+                            {"data": "weather"},
+                            {
+                                "data": function (data, type, row, meta) {
+                                    return data.temperature + "&deg;C";
+                                }
+                            },
+                            {
+                                "data": function (data, type, row, meta) {
+                                    return data.humidity + "%";
+                                }
+                            },
+                            {
+                                "data": function (data, type, row, meta) {
+                                    return data.wind_speed + " mph";
+                                }
+                            },
+                            {
+                                "data": function (data, type, row, meta) {
+                                    return '<a href="#" onclick="deleteCityData(' + '\'' + data.city_name + '\')" data-bs-toggle="modal" data-bs-target="#modalTop"><i class="bx bxs-trash me-1"></i></a>';
+                                }
+                            }
+                        ]
+                    });
+                },
+                error: function (request, status, error) {
+                    swal.fire(request.responseJSON.error);
+                }
+            });
+        }
+
+        function deleteCityData(cityName) {
+            Swal.fire({
+                title: 'Are you want to delete?',
+                text: "You won't be able to revert this!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    deleteCity(cityName);
+                }
+            })
+        }
+
+        function deleteCity(cityName) {
+            var url = '/deletecity';
+            const obj = {
+                location: cityName
+            };
+
+            const jsonString = JSON.stringify(obj);
+
+            $.ajax({
+                type: 'POST',
+                url: url, // Your Spring REST endpoint
+                data: jsonString,
+                contentType: 'application/json',
+                dataType: 'json',
+                success: function (data) {
+                    // swal.fire(data.responseText);
+                    setTimeout(function () {
+                        var url = "/likedcities";
+                        window.open(url, "_self");
+                    }, 2000);
+                },
+                error: function (error) {
+                    console.log("Error occured!");
+                }
+            });
+        }
+
+    </script>
+</head>
+
+<div layout:fragment="content">
+    <div class="row">
+        <div class="col-12">
+            <!--            <h4 class="fw-bold py-3"><span class="text-muted fw-light">Weather Information /</span></h4>-->
+            <h4 class="fw-bold py-3"><span class="text-muted fw-light">Weather Information /</span> View Liked Cities
+            </h4>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-12">
+            <div class="card mb-4">
+                <div class="card-body">
+                    <table id="listCities" class="table table-striped">
+                        <thead>
+                        <tr>
+                            <th>City</th>
+                            <th>Weather</th>
+                            <th>Temperature</th>
+                            <th>Humidity</th>
+                            <th>Wind Speed</th>
+                            <th>Action</th>
+                        </tr>
+                        </thead>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+</html>

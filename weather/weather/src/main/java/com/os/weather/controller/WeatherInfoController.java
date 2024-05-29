@@ -1,10 +1,14 @@
 package com.os.weather.controller;
 
+import com.os.weather.common.BaseController;
 import com.os.weather.entity.Weather;
+import com.os.weather.services.service.ListCitiesActionService;
+import com.os.weather.utility.WeatherHelper;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -14,12 +18,19 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.Map;
 
 @Controller
-public class WeatherInfoController {
+public class WeatherInfoController extends BaseController {
     private final String apiKey = "bab221b4a0c72d3bb1c0c48d966621e8";
     private String error;
     private boolean isValid;
+    private ListCitiesActionService listCitiesActionService;
+
+    @Autowired
+    public WeatherInfoController(ListCitiesActionService listCitiesActionService) {
+        this.listCitiesActionService = listCitiesActionService;
+    }
 
     @GetMapping("/weatherinfo")
     public String searchWeather() {
@@ -28,18 +39,22 @@ public class WeatherInfoController {
 
     @GetMapping("/api/search")
     @ResponseBody
-    public ResponseEntity<Weather> createStudent(@RequestParam String city) {
+    public ResponseEntity<Weather> serachWeather(@RequestParam String city) {
         Weather weatherInfo = new Weather();
-        String request = getResponse(
+//        String request = getResponse(
+//                "http://api.openweathermap.org/data/2.5/weather?q=" + city + "&units=metric&appid=" + apiKey);
+//
+        String request = WeatherHelper.getResponse(
                 "http://api.openweathermap.org/data/2.5/weather?q=" + city + "&units=metric&appid=" + apiKey);
         if (!(request.startsWith("Error"))) {
-            JSONObject ob = getDataObject(request);
-            System.out.println(isValid);
-            if (isValid) {
+//            JSONObject ob = getDataObject(request);
+            JSONObject ob = WeatherHelper.getDataObject(request);
+            if (ob != null) {
                 JSONObject main = (JSONObject) ob.get("main");
                 JSONObject coord = (JSONObject) ob.get("coord");
                 JSONArray weatherArray = (JSONArray) ob.get("weather");
                 JSONObject weatherObj = (JSONObject) weatherArray.get(0);
+                JSONObject windObj = (JSONObject) ob.get("wind");
 
                 weatherInfo.setTemp(Double.parseDouble(main.get("temp").toString()));
                 weatherInfo.setFeels_like(Double.parseDouble(main.get("feels_like").toString()));
@@ -51,16 +66,29 @@ public class WeatherInfoController {
                 weatherInfo.setLongitude(Double.parseDouble(coord.get("lon").toString()));
                 weatherInfo.setLatitude(Double.parseDouble(coord.get("lat").toString()));
                 weatherInfo.setWeather(weatherObj.get("main").toString());
+                weatherInfo.setWind(Double.parseDouble(windObj.get("speed").toString()));
             } else {
-                weatherInfo.setError("error occured");
+                weatherInfo.setError("Error Occured!");
             }
         } else {
-            weatherInfo.setError("error occured");
+            weatherInfo.setError("Error Occured!");
         }
 
         ResponseEntity<Weather> weatherResponseEntity = new ResponseEntity<>(weatherInfo, HttpStatus.CREATED);
         return weatherResponseEntity;
     }
+
+    @GetMapping("/likedcities")
+    public String showFellow() {
+        return "weather/likedcities";
+    }
+
+    @RequestMapping(value = "/api/likedcitylist", method = RequestMethod.GET)
+    @ResponseBody
+    public String listFellow(@RequestParam Map<String, Object> parameters) {
+        return renderOutput(listCitiesActionService, parameters);
+    }
+
 
     private JSONObject getDataObject(String response) {
         JSONObject ob = null;
@@ -81,7 +109,6 @@ public class WeatherInfoController {
         }
         return ob;
     }
-
     private String getResponse(String urlString) {
         try {
             URL url = new URL(urlString);

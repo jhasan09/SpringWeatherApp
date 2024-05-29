@@ -22,7 +22,7 @@
             <li th:class="${#httpServletRequest.requestURI.contains('home')} ? 'menu-item active' : 'menu-item'">
                 <a href="/home" class="menu-link">
                     <i class="menu-icon tf-icons bx bx-home-circle"></i>
-                    <div data-i18n="Analytics">Dashboard</div>
+                    <div data-i18n="Analytics">Home</div>
                 </a>
             </li>
 
@@ -37,6 +37,20 @@
                 <a href="/likedcities" class="menu-link">
                     <i class="menu-icon tf-icons bx bxs-city"></i>
                     <div data-i18n="Basic">View Liked Cities</div>
+                </a>
+            </li>
+
+            <li th:class="${#httpServletRequest.requestURI.contains('editprofile')} ? 'menu-item active' : 'menu-item'">
+                <a th:href="@{/user/editprofile(id=${session.userId})}" class="menu-link">
+                    <i class="menu-icon tf-icons bx bx-image"></i>
+                    <div data-i18n="Basic">My Profile</div>
+                </a>
+            </li>
+
+            <li th:class="${#httpServletRequest.requestURI.contains('change-password')} ? 'menu-item active' : 'menu-item'">
+                <a href="/user/change-password" class="menu-link">
+                    <i class="menu-icon tf-icons bx bx-lock-open-alt"></i>
+                    <div data-i18n="Basic">Change Password</div>
                 </a>
             </li>
 

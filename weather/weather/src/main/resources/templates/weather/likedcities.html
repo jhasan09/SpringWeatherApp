@@ -24,9 +24,21 @@
                         "columns": [
                             {"data": "city_name"},
                             {"data": "weather"},
-                            {"data": "temperature"},
-                            {"data": "humidity"},
-                            {"data": "wind_speed"},
+                            {
+                                "data": function (data, type, row, meta) {
+                                    return data.temperature + "&deg;C";
+                                }
+                            },
+                            {
+                                "data": function (data, type, row, meta) {
+                                    return data.humidity + "%";
+                                }
+                            },
+                            {
+                                "data": function (data, type, row, meta) {
+                                    return data.wind_speed + " mph";
+                                }
+                            },
                             {
                                 "data": function (data, type, row, meta) {
                                     return '<a href="#" onclick="deleteCityData(' + '\'' + data.city_name + '\')" data-bs-toggle="modal" data-bs-target="#modalTop"><i class="bx bxs-trash me-1"></i></a>';
@@ -103,11 +115,11 @@
                     <table id="listCities" class="table table-striped">
                         <thead>
                         <tr>
-                            <th>Fellow ID</th>
-                            <th>Fellow Name</th>
-                            <th>Subject</th>
-                            <th>Institute</th>
-                            <th>Designation</th>
+                            <th>City</th>
+                            <th>Weather</th>
+                            <th>Temperature</th>
+                            <th>Humidity</th>
+                            <th>Wind Speed</th>
                             <th>Action</th>
                         </tr>
                         </thead>

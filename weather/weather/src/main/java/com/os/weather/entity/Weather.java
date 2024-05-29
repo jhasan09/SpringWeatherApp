@@ -1,9 +1,9 @@
 package com.os.weather.entity;
 
 public class Weather {
-    public double temp;
-    public double feels_like;
-    public double temp_min;
+    private double temp;
+    private double feels_like;
+    private double temp_min;
 
     public void setTemp(double temp) {
         this.temp = temp;
@@ -49,13 +49,66 @@ public class Weather {
         this.error = error;
     }
 
-    public double temp_max;
-    public double pressure;
-    public double humidity;
+    private double temp_max;
+    private double pressure;
+    private double humidity;
     public String location;
-    public double longitude;
-    public double latitude;
-    public String weather;
-    public String error;
+    private double longitude;
+    private double latitude;
+    private double wind;
 
+    public void setWind(double wind) {
+        this.wind = wind;
+    }
+
+    private String weather;
+    private String error;
+
+    public double getTemp() {
+        return temp;
+    }
+
+    public double getFeels_like() {
+        return feels_like;
+    }
+
+    public double getTemp_min() {
+        return temp_min;
+    }
+
+    public double getTemp_max() {
+        return temp_max;
+    }
+
+    public double getPressure() {
+        return pressure;
+    }
+
+    public double getHumidity() {
+        return humidity;
+    }
+
+    public String getLocation() {
+        return location;
+    }
+
+    public double getLongitude() {
+        return longitude;
+    }
+
+    public double getLatitude() {
+        return latitude;
+    }
+
+    public double getWind() {
+        return wind;
+    }
+
+    public String getWeather() {
+        return weather;
+    }
+
+    public String getError() {
+        return error;
+    }
 }

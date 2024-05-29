@@ -4,14 +4,16 @@
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{layout/main_custom}">
 <head>
-    <title> Weather Information </title>
     <meta charset="utf-8"/>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
     <script>
+        var weatherData = "";
         $(document).ready(function () {
             $('#searchForm').submit(function (event) {
                 event.preventDefault();
                 var searchParam = $('#searchInput').val();
+                $('#cb_like_city').prop('checked', false);
+                weatherData = "";
 
                 $.ajax({
                     type: 'GET',
@@ -19,9 +21,9 @@
                     data: {city: searchParam},
                     contentType: 'application/json',
                     success: function (data) {
+                        weatherData = data;
                         $('#largeModal').modal('toggle');
-                        console.log(JSON.stringify(data));
-                        document.getElementById("modalHeaderTitle").innerHTML = "Fellow Details";
+                        document.getElementById("modalHeaderTitle").innerHTML = "Weather Details";
                         let content =
                             '<tr>' +
                             '<td><strong> Location: </strong></td>' +
@@ -35,42 +37,47 @@
 
                             '<tr>' +
                             '<td style="width: 150px;"> <strong> Temperature: </strong> </td>' +
-                            '<td>' + data.temp + '</td>' +
+                            '<td>' + data.temp + "&deg;C" + '</td>' +
                             '</tr>' +
 
                             '<tr>' +
                             '<td><strong> Feels Like: </strong></td>' +
-                            '<td>' + data.feels_like + '</td>' +
+                            '<td>' + data.feels_like + "&deg;C" + '</td>' +
                             '</tr>' +
 
                             '<tr>' +
                             '<td><strong> Minimum Temperature: </strong></td>' +
-                            '<td>' + data.temp_min + '</td>' +
+                            '<td>' + data.temp_min + "&deg;C" + '</td>' +
                             '</tr>' +
 
                             '<tr>' +
                             '<td><strong> Maximum Temperature: </strong></td>' +
-                            '<td>' + data.temp_max + '</td>' +
-                            '</tr>' +
-
-                            '<tr>' +
-                            '<td><strong> Presurre: </strong></td>' +
-                            '<td>' + data.pressure + '</td>' +
+                            '<td>' + data.temp_max + "&deg;C" + '</td>' +
                             '</tr>' +
 
                             '<tr>' +
                             '<td><strong> Humidity: </strong></td>' +
-                            '<td>' + data.humidity + '</td>' +
+                            '<td>' + data.humidity + "%" + '</td>' +
+                            '</tr>' +
+
+                            '<tr>' +
+                            '<td><strong> Wind Speed: </strong></td>' +
+                            '<td>' + data.wind + " mph" + '</td>' +
+                            '</tr>' +
+
+                            '<tr>' +
+                            '<td><strong> Presurre: </strong></td>' +
+                            '<td>' + data.pressure + " inHg" + '</td>' +
                             '</tr>' +
 
                             '<tr>' +
                             '<td><strong> Longitude: </strong></td>' +
-                            '<td>' + data.longitude + '</td>' +
+                            '<td>' + data.longitude + "° E" + '</td>' +
                             '</tr>' +
 
                             '<tr>' +
                             '<td><strong> Latitude: </strong></td>' +
-                            '<td>' + data.latitude + '</td>' +
+                            '<td>' + data.latitude + "° N" + '</td>' +
                             '</tr>';
 
                         $("#modalContent").html(content);
@@ -81,6 +88,43 @@
                         console.log(error);
                     }
                 });
+            });
+            $('#cb_like_city').on('change', function () {
+                var checked = this.checked;
+                var city = $('#searchInput').val();
+                if (!city) {
+                    swal.fire("Please Enter a Location.");
+                    return;
+                }
+
+                if (!weatherData) {
+                    if(checked){
+                        swal.fire("Before like please view weather info. first");
+                    }
+                    return;
+                }
+
+                var url = checked ? '/savecity' : '/deletecity';
+
+                $.ajax({
+                    type: 'POST',
+                    url: url, // Your Spring REST endpoint
+                    data: JSON.stringify(weatherData),
+                    contentType: 'application/json',
+                    dataType: 'json',
+                    success: function (data) {
+                        swal.fire(data.responseText);
+                        setTimeout(function () {
+                            swal.close();
+                        }, 2000);
+                    },
+                    error: function (error) {
+                        console.log("Error occured!");
+                    }
+                });
+            });
+            $('#searchInput').on('input', function (e) {
+                weatherData = "";
             });
         });
     </script>
@@ -99,18 +143,32 @@
                 <div class="card-body">
                     <!--                    <div th:replace="view/fellow/create/create :: firstcreate"></div>-->
                     <form id="searchForm">
-                        <input type="text"
-                               id="searchInput"
-                               style="height: 33px; width: 230px;"
-                               name="searchInput"
-                               placeholder="Enter Location">
-                        <button style="height: 33px;
+                        <div class="row">
+                            <div class="col-12 mb-3">
+                                <input type="text"
+                                       id="searchInput"
+                                       style="height: 33px; width: 230px;"
+                                       name="searchInput"
+                                       placeholder="Enter Location">
+                                <button style="height: 33px;
                                        width: 75px;
                                        border: 2px solid darkgray;
                                        border-radius: 5px;
                                        margin-left: 5px;"
-                                type="submit">Search
-                        </button>
+                                        type="submit">Search
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-12 mt-3 mb-5">
+                                <label for="cb_like_city"> Like this City?</label>
+                                <input type="checkbox" style="width: 17px; height: 17px"
+                                       name="cb_like_city"
+                                       id="cb_like_city"/>
+                            </div>
+                        </div>
+
                     </form>
                 </div>
             </div>
@@ -150,15 +208,3 @@
 </div>
 
 </html>
-
-
-
-
-
-
-
-
-
-
-
-

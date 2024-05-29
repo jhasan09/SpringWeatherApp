@@ -33,6 +33,13 @@
                 </a>
             </li>
 
+            <li th:class="${#httpServletRequest.requestURI.contains('likedcities')} ? 'menu-item active' : 'menu-item'">
+                <a href="/likedcities" class="menu-link">
+                    <i class="menu-icon tf-icons bx bxs-city"></i>
+                    <div data-i18n="Basic">View Liked Cities</div>
+                </a>
+            </li>
+
         </ul>
     </aside>
 </div>

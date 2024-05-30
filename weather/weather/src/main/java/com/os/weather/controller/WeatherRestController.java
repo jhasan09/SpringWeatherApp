@@ -3,7 +3,9 @@ package com.os.weather.controller;
 import com.os.weather.entity.LikedCity;
 import com.os.weather.entity.Weather;
 import com.os.weather.repository.WeatherRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
 import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 
@@ -12,12 +14,13 @@ import java.util.HashMap;
 public class WeatherRestController {
     private WeatherRepository weatherRepository;
 
+    @Autowired
     public WeatherRestController(WeatherRepository weatherRepository) {
         this.weatherRepository = weatherRepository;
     }
 
     @RequestMapping(value = "/savecity", method = RequestMethod.POST)
-    public @ResponseBody HashMap saveCity(@RequestBody Weather weatherInfo, HttpServletRequest request) {
+    public @ResponseBody HashMap saveCity(@RequestBody Weather weatherInfo) {
         LikedCity likedCity = weatherRepository.findByCityName(weatherInfo.location);
         if (likedCity == null) {
             likedCity = new LikedCity();

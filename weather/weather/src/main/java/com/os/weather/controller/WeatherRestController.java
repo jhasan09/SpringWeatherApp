@@ -84,21 +84,18 @@ public class WeatherRestController extends BaseController {
 
     @RequestMapping(value = "/api/likedcitylist", method = RequestMethod.GET)
     @ResponseBody
-    public String listFellow(@RequestParam Map<String, Object> parameters) {
+    public String listLikedCities(@RequestParam Map<String, Object> parameters) {
         return renderOutput(listCitiesActionService, parameters);
     }
 
     @RequestMapping(value = "/deletecity", method = RequestMethod.POST)
-    public @ResponseBody HashMap deleteCity(@RequestBody Weather weatherInfo, HttpServletRequest request) {
-        HashMap<String, String> map = new HashMap<>();
+    public @ResponseBody LikedCity deleteCity(@RequestBody Weather weatherInfo, HttpServletRequest request) {
         LikedCity likedCity = weatherRepository.findByCityName(weatherInfo.location);
         if (likedCity == null) {
-            map.put("responseText", weatherInfo.location + "  not found in liked list");
-            return map;
+            return null;
         }
 
         weatherRepository.delete(likedCity);
-        map.put("responseText", weatherInfo.location + " removed from liked list");
-        return map;
+        return likedCity;
     }
 }

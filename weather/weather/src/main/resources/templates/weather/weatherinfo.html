@@ -24,6 +24,7 @@
                         weatherData = data;
                         $('#largeModal').modal('toggle');
                         document.getElementById("modalHeaderTitle").innerHTML = "Weather Details";
+                        document.getElementById("imgWeather").src = data.weatherIcon;
                         let content =
                             '<tr>' +
                             '<td><strong> Location: </strong></td>' +
@@ -114,10 +115,11 @@
                         contentType: 'application/json',
                         dataType: 'json',
                         success: function (data) {
+                            $('#largeModal').modal('toggle');
                             swal.fire(data.responseText);
-                            setTimeout(function () {
-                                swal.close();
-                            }, 2000);
+                            // setTimeout(function () {
+                            //     swal.close();
+                            // }, 2000);
                         },
                         error: function (error) {
                             console.log("Error occured!");
@@ -136,7 +138,6 @@
 <div layout:fragment="content">
     <div class="row">
         <div class="col-12">
-            <!--            <h4 class="fw-bold py-3"><span class="text-muted fw-light">Weather Information /</span></h4>-->
             <h4 class="fw-bold py-3"><span class="text-muted fw-light">Weather Information /</span> Search Weather</h4>
         </div>
     </div>
@@ -144,7 +145,6 @@
         <div class="col-12">
             <div class="card mb-4">
                 <div class="card-body">
-                    <!--                    <div th:replace="view/fellow/create/create :: firstcreate"></div>-->
                     <form id="searchForm">
                         <div class="row">
                             <div class="col-12 mb-3">
@@ -163,28 +163,31 @@
                             </div>
                         </div>
 
-                        <div class="row">
-                            <div class="col-12 mt-3 mb-5">
-                                <label for="cb_like_city"> Like this City?</label>
-                                <input type="checkbox" style="width: 17px; height: 17px"
-                                       name="cb_like_city"
-                                       id="cb_like_city"/>
-                            </div>
-                        </div>
+<!--                        <div class="row">-->
+<!--                            <div class="col-12 mt-3 mb-5">-->
+<!--                                <label for="cb_like_city"> Like this City?</label>-->
+<!--                                <input type="checkbox" style="width: 17px; height: 17px"-->
+<!--                                       name="cb_like_city"-->
+<!--                                       id="cb_like_city"/>-->
+<!--                            </div>-->
+<!--                        </div>-->
 
                     </form>
                 </div>
             </div>
         </div>
     </div>
-    <!--    <div th:replace="view/fellow/create/script :: firstscript"></div>-->
+
     <div th:fragment="modal" xmlns:th="http://www.w3.org/1999/xhtml">
         <!-- Modal -->
         <div class="modal fade" id="largeModal" tabindex="-1" aria-hidden="true">
             <div class="modal-dialog modal-lg" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="modalHeaderTitle"></h5>
+                        <div class="expense" style="display:flex">
+                            <h5 class="modal-title" id="modalHeaderTitle"></h5>
+                            <img id="imgWeather" style="display:table-cell; width: 30px; height: 30px; margin-left: 7px;" + src="/asset/images/blank1.png"/>
+                        </div>
                         <button
                                 type="button"
                                 class="btn-close"
@@ -199,10 +202,20 @@
                             </table>
                         </div>
                     </div>
+
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
-                            Close
-                        </button>
+                        <div class="row">
+                            <div class="col-12">
+                                <label for="cb_like_city"> Like this City?</label>
+                                <input type="checkbox" style="width: 17px; height: 17px; margin-right: 190px; margin-bottom: 15px"
+                                       name="cb_like_city"
+                                       id="cb_like_city"/>
+                                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
+                                    Close
+                                </button>
+                            </div>
+                        </div>
+
                     </div>
                 </div>
             </div>

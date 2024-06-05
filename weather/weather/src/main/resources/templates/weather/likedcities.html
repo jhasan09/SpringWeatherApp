@@ -84,11 +84,16 @@
                 contentType: 'application/json',
                 dataType: 'json',
                 success: function (data) {
-                    // swal.fire(data.responseText);
-                    setTimeout(function () {
-                        var url = "/likedcities";
-                        window.open(url, "_self");
-                    }, 2000);
+                    if (data) {
+                        toasterDisplay("success", "Successfully Deleted.");
+                        setTimeout(function () {
+                            var url = "/likedcities";
+                            window.open(url, "_self");
+                        }, 2000);
+                    } else {
+                        swal.fire("City not found!");
+                    }
+
                 },
                 error: function (error) {
                     console.log("Error occured!");

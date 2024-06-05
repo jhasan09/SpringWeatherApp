@@ -172,9 +172,10 @@
     <div class="account-login">
         <h1 style="margin-bottom: 30px; text-align: center;">Weather App</h1>
 
-        <form name="loginForm" th:action="@{/login}" onsubmit="" method="POST" class="login-form"
+        <form name="loginForm" th:action="@{/login}" onsubmit="return validateForm()" method="POST" class="login-form"
               style="padding-top: 10px;">
             <h4 class="text-center" style="color: gray">User Login</h4>
+
 
             <div class="form-group">
                 <input type="text" id="user_name" name="user_name" placeholder="User Name"
@@ -189,10 +190,7 @@
             </div>
 
             <button class="btn" type="submit">Login</button>
-
-            <a href="/registration" class="btn btn-info btn-block">
-                Registration
-            </a>
+            <p>Are you new?<a href="/registration">Register</a></p>
 
         </form>
     </div>

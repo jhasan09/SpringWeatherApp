@@ -96,10 +96,17 @@ public class WeatherApplicationTests {
 
     @org.junit.Test
     public void testDeleteLikedCity() throws Exception {
-        MockHttpServletRequest request = new MockHttpServletRequest();
-        RequestContextHolder.setRequestAttributes(new ServletRequestAttributes(request));
         Weather weather = new Weather();
         weather.setLocation("Dhaka");
-        when(weatherRestController.deleteCity(weather, request)).thenReturn(LikedCity.builder().build());
+
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.configure(SerializationFeature.WRAP_ROOT_VALUE, false);
+        ObjectWriter ow = mapper.writer().withDefaultPrettyPrinter();
+        String requestJson = ow.writeValueAsString(weather);
+
+        mockMvc.perform(MockMvcRequestBuilders.post("/deletecity")
+                        .contentType("application/json")
+                        .content(requestJson))
+                .andExpect(status().isOk());
     }
 }

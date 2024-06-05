@@ -11,6 +11,7 @@ public class Weather {
     public double longitude;
     public double latitude;
     public String weather;
+    public String weatherIcon;
     private double wind;
     public String error;
 
@@ -100,6 +101,10 @@ public class Weather {
 
     public void setWind(double wind) {
         this.wind = wind;
+    }
+
+    public void setWeatherIcon(String weatherIcon) {
+        this.weatherIcon = weatherIcon;
     }
 
     public String getError() {

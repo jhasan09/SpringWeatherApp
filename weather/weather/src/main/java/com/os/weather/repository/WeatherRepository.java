@@ -6,6 +6,6 @@ import org.springframework.stereotype.Repository;
 
 @Repository("weatherRepository")
 public interface WeatherRepository extends JpaRepository<LikedCity, Long> {
-    LikedCity findByCityName(String cityName);
+    LikedCity findByCityNameAndUserName(String cityName, String userName);
 
 }

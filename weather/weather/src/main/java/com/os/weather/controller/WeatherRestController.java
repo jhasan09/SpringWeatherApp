@@ -11,7 +11,10 @@ import org.json.simple.JSONObject;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -20,6 +23,8 @@ public class WeatherRestController extends BaseController {
     private final String apiKey = "bab221b4a0c72d3bb1c0c48d966621e8";
     private WeatherRepository weatherRepository;
     private ListCitiesActionService listCitiesActionService;
+
+    private final String imageResourcePath = "/static/asset/images/";
 
     public WeatherRestController(WeatherRepository weatherRepository, ListCitiesActionService listCitiesActionService) {
         this.weatherRepository = weatherRepository;
@@ -47,11 +52,19 @@ public class WeatherRestController extends BaseController {
                 weatherInfo.setTemp_max(Double.parseDouble(main.get("temp_max").toString()));
                 weatherInfo.setPressure(Double.parseDouble(main.get("pressure").toString()));
                 weatherInfo.setHumidity(Double.parseDouble(main.get("humidity").toString()));
-                weatherInfo.setLocation(ob.get("name").toString());
+//                weatherInfo.setLocation(ob.get("name").toString());
+                weatherInfo.setLocation(city.substring(0, 1).toUpperCase() + city.substring(1));
                 weatherInfo.setLongitude(Double.parseDouble(coord.get("lon").toString()));
                 weatherInfo.setLatitude(Double.parseDouble(coord.get("lat").toString()));
                 weatherInfo.setWeather(weatherObj.get("main").toString());
                 weatherInfo.setWind(Double.parseDouble(windObj.get("speed").toString()));
+
+                String weatherIconLocation = imageResourcePath + weatherInfo.getWeather().toLowerCase() + ".png";
+                InputStream inputStream = getClass().getResourceAsStream(weatherIconLocation);
+                String icon = inputStream != null ? weatherInfo.getWeather().toLowerCase() + ".png" : "weather_default.png";
+                weatherIconLocation = imageResourcePath.replaceFirst("/static", "");
+                weatherInfo.setWeatherIcon(weatherIconLocation + icon);
+
             } else {
                 weatherInfo.setError("Error Occured!");
             }
@@ -65,17 +78,22 @@ public class WeatherRestController extends BaseController {
 
     @RequestMapping(value = "/savecity", method = RequestMethod.POST)
     public @ResponseBody HashMap saveCity(@RequestBody Weather weatherInfo, HttpServletRequest request) {
-        LikedCity likedCity = weatherRepository.findByCityName(weatherInfo.location);
+        String userId = "";
+        HttpSession session = request.getSession(true);
+        if (session.getAttribute("userId") != null) {
+            userId = (String) session.getAttribute("userId");
+        }
+        LikedCity likedCity = weatherRepository.findByCityNameAndUserName(weatherInfo.location, userId);
         if (likedCity == null) {
             likedCity = new LikedCity();
+            likedCity.setCityName(weatherInfo.location);
+            likedCity.setWeather(weatherInfo.getWeather());
+            likedCity.setTemperature(weatherInfo.getTemp());
+            likedCity.setHumidity(weatherInfo.getHumidity());
+            likedCity.setWindSpeed(weatherInfo.getWind());
+            likedCity.setUserName(userId);
+            weatherRepository.save(likedCity);
         }
-
-        likedCity.setCityName(weatherInfo.location);
-        likedCity.setWeather(weatherInfo.getWeather());
-        likedCity.setTemperature(weatherInfo.getTemp());
-        likedCity.setHumidity(weatherInfo.getHumidity());
-        likedCity.setWindSpeed(weatherInfo.getWind());
-        weatherRepository.save(likedCity);
 
         HashMap<String, String> map = new HashMap<>();
         map.put("responseText", weatherInfo.location + " added to liked list");
@@ -84,18 +102,33 @@ public class WeatherRestController extends BaseController {
 
     @RequestMapping(value = "/api/likedcitylist", method = RequestMethod.GET)
     @ResponseBody
-    public String listLikedCities(@RequestParam Map<String, Object> parameters) {
+    public String listLikedCities(@RequestParam Map<String, Object> parameters, HttpServletRequest request) {
+        HttpSession session = request.getSession(true);
+        String userId = "";
+        if (session.getAttribute("userId") != null) {
+            userId = (String) session.getAttribute("userId");
+        }
+        parameters.put("userId", userId);
         return renderOutput(listCitiesActionService, parameters);
     }
 
     @RequestMapping(value = "/deletecity", method = RequestMethod.POST)
-    public @ResponseBody LikedCity deleteCity(@RequestBody Weather weatherInfo, HttpServletRequest request) {
-        LikedCity likedCity = weatherRepository.findByCityName(weatherInfo.location);
+    public @ResponseBody HashMap deleteCity(@RequestBody Weather weatherInfo, HttpServletRequest request) {
+        HttpSession session = request.getSession(true);
+        String userId = "";
+        if (session.getAttribute("userId") != null) {
+            userId = (String) session.getAttribute("userId");
+        }
+
+        LikedCity likedCity = weatherRepository.findByCityNameAndUserName(weatherInfo.location, userId);
         if (likedCity == null) {
             return null;
         }
 
         weatherRepository.delete(likedCity);
-        return likedCity;
+        HashMap<String, String> map = new HashMap<>();
+        map.put("responseText", weatherInfo.location + " added to liked list");
+        return map;
+        //return likedCity;
     }
 }

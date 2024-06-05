@@ -7,6 +7,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Map;
+import java.util.SimpleTimeZone;
 
 @Service
 public class ListCitiesActionService extends BaseService implements ActionInterface {
@@ -20,7 +21,8 @@ public class ListCitiesActionService extends BaseService implements ActionInterf
     @Override
     public Map execute(Map previousResult) {
         try {
-            String preparedQuery = "SELECT * FROM liked_city";
+            String userName =(String) previousResult.get("userId");
+            String preparedQuery = "SELECT * FROM liked_city WHERE user_name = '" + userName + "'";
             List<GroovyRowResult> queryList = executeSelectSql(preparedQuery);
             previousResult.put("queryList", queryList);
             return previousResult;
